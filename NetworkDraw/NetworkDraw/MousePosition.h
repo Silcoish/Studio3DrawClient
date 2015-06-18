@@ -9,6 +9,7 @@ public:
 	int x, y;
 	char misc;
 	sf::RectangleShape* rect;
+	sf::Font font;
 	sf::Text* text;
 public:
 	MousePosition() {};

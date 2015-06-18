@@ -71,6 +71,7 @@ void NetworkConnection::Render(sf::RenderWindow* window)
 			if (mousePositions[i]->x >= 0 && mousePositions[i]->x < window->getSize().x && mousePositions[i]->y >= 0 && mousePositions[i]->y < window->getSize().y)
 			{
 				window->draw(*mousePositions[i]->rect);
+				window->draw(*mousePositions[i]->text);
 			}
 		}
 	}
@@ -145,6 +146,7 @@ void NetworkConnection::Listen()
 					PacketServerInfo* p = (PacketServerInfo*)packet;
 					std::cout << "Width: " << p->width << ", Height: " << p->height << std::endl;
 					std::cout << "You have announced youself" << std::endl;
+					
 				}
 				else if (packet->type == Packet::e_serverCursors)
 				{
@@ -167,6 +169,17 @@ void NetworkConnection::Listen()
 							mousePositions[i]->rect->setPosition(p->cursor[i].m_posX, p->cursor[i].m_posY);
 							mousePositions[i]->rect->setFillColor(sf::Color::White);
 							mousePositions[i]->rect->setSize(sf::Vector2f(2, 2));
+
+							mousePositions[i]->font.loadFromFile("Resources/JOKERMAN.TTF");
+							
+							if (p->cursor->m_data != NULL)
+								sf::String s = std::to_string(p->cursor->m_data);
+							else
+								sf::String s = "wot";
+							mousePositions[i]->text = new sf::Text(s, mousePositions[i]->font);
+							mousePositions[i]->text->setPosition(sf::Vector2f(p->cursor->m_posX, p->cursor->m_posY));
+							mousePositions[i]->text->setCharacterSize(16);
+							mousePositions[i]->text->setColor(sf::Color::White);
 						}
 						else
 						{
