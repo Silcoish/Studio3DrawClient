@@ -19,7 +19,7 @@ UI::UI(const std::string& ip, const unsigned int port)
 	blue = new Slider(525, 480, 100, 30, 0.0f, 1.0f, 0.0f);
 	blue->SetColor(sf::Color::Blue);
 
-	ipTextInput = new TextInput(sf::Vector2f(562, 10), sf::Vector2f(100, 30), "127.0.0.1"/*"10.40.61.0"/*"10.40.60.35"*/);
+	ipTextInput = new TextInput(sf::Vector2f(562, 10), sf::Vector2f(100, 30), /*"127.0.0.1"*/"10.40.61.0"/*"10.40.60.35"*/);
 	portTextInput = new TextInput(sf::Vector2f(562, 70), sf::Vector2f(100, 30), "1300");
 	backgroundRectangle = new sf::RectangleShape();
 	backgroundRectangle->setSize(sf::Vector2f(200, 512));

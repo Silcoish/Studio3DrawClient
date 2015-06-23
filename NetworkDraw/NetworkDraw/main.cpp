@@ -26,8 +26,8 @@ void main()
 
 	sf::RenderWindow window(sf::VideoMode(712, 512), "SFML Network Drawing Program");
 	UI ui(ip, port);
-	NetworkConnection connection;
 	Heatmap heatmap;
+	NetworkConnection connection(&heatmap);
 
 	//set up deltaT variables
 	std::chrono::high_resolution_clock::time_point lastTime = std::chrono::high_resolution_clock::now();
@@ -118,7 +118,6 @@ void main()
 						box.b = (rand() % 255);
 						connection.SendPacket(&box);
 					}
-
 				}
 			}
 
@@ -129,6 +128,7 @@ void main()
 			ui.Update(&event, &window);
 
 			lastTime = std::chrono::high_resolution_clock::now();
+
 		}
 		
 

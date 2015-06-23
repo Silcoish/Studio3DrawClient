@@ -1,7 +1,8 @@
 #include "NetworkConnection.h"
 
-NetworkConnection::NetworkConnection()
+NetworkConnection::NetworkConnection(Heatmap* heatmap)
 {
+	this->heatmap = heatmap;
 	start = std::chrono::system_clock::now();
 }
 
@@ -19,7 +20,7 @@ PacketPixel packetArray[30];
 
 void NetworkConnection::Update(sf::RenderWindow* window)
 {
-
+	DrawHeatmap();
 	end = std::chrono::system_clock::now();
 	elapsed_seconds = end-start;
 
@@ -70,7 +71,7 @@ void NetworkConnection::Render(sf::RenderWindow* window)
 		{
 			if (mousePositions[i]->x >= 0 && mousePositions[i]->x < window->getSize().x && mousePositions[i]->y >= 0 && mousePositions[i]->y < window->getSize().y)
 			{
-				window->draw(*mousePositions[i]->rect);
+				window->draw(*mousePositions[i]->mouseImage);
 				window->draw(*mousePositions[i]->text);
 			}
 		}
@@ -156,8 +157,9 @@ void NetworkConnection::Listen()
 					{
 						std::cout << "X: " << p->cursor[i].m_posX << std::endl;
 						std::cout << "Y: " << p->cursor[i].m_posY << std::endl;
-						std::cout << "Misc: " << p->cursor[i].m_data << std::endl;
-						
+						std::cout << "Misc: " << std::hex << (unsigned int)p->cursor[i].m_data << std::dec << std::endl;
+						std::cout << "Misc int: " << (int)p->cursor[i].m_data << std::endl;
+
 						if (i >= mousePositions.size())
 						{
 							//Create a new one
@@ -165,18 +167,21 @@ void NetworkConnection::Listen()
 							mousePositions[i]->x = p->cursor[i].m_posX;
 							mousePositions[i]->y = p->cursor[i].m_posY;
 							mousePositions[i]->misc = p->cursor[i].m_data;
-							mousePositions[i]->rect = new sf::RectangleShape();
-							mousePositions[i]->rect->setPosition(p->cursor[i].m_posX, p->cursor[i].m_posY);
-							mousePositions[i]->rect->setFillColor(sf::Color::White);
-							mousePositions[i]->rect->setSize(sf::Vector2f(2, 2));
+							mousePositions[i]->miscInt = (unsigned int)p->cursor[i].m_data;
+
+							sf::Texture* texture = new sf::Texture();
+							texture->loadFromFile("Resources/Mouse.png");
+							mousePositions[i]->mouseImage = new sf::Sprite();
+							mousePositions[i]->mouseImage->setTexture(*texture);
+							mousePositions[i]->mouseImage->setPosition(mousePositions[i]->x, mousePositions[i]->y);
 
 							mousePositions[i]->font.loadFromFile("Resources/JOKERMAN.TTF");
-							
-							if (p->cursor->m_data != NULL)
-								sf::String s = std::to_string(p->cursor->m_data);
-							else
-								sf::String s = "wot";
-							mousePositions[i]->text = new sf::Text(s, mousePositions[i]->font);
+
+							std::stringstream ss;
+							ss << std::hex << (unsigned int)p->cursor->m_data;
+
+
+							mousePositions[i]->text = new sf::Text(ss.str(), mousePositions[i]->font);
 							mousePositions[i]->text->setPosition(sf::Vector2f(p->cursor->m_posX, p->cursor->m_posY));
 							mousePositions[i]->text->setCharacterSize(16);
 							mousePositions[i]->text->setColor(sf::Color::White);
@@ -187,7 +192,11 @@ void NetworkConnection::Listen()
 							mousePositions[i]->x = p->cursor[i].m_posX;
 							mousePositions[i]->y = p->cursor[i].m_posY;
 							mousePositions[i]->misc = p->cursor[i].m_data;
-							mousePositions[i]->rect->setPosition(mousePositions[i]->x, mousePositions[i]->y);
+							mousePositions[i]->mouseImage->setPosition(mousePositions[i]->x, mousePositions[i]->y);
+							std::stringstream ss;
+							ss << std::hex << (unsigned int)p->cursor[i].m_data;
+							mousePositions[i]->text->setString(ss.str());
+							mousePositions[i]->text->setPosition(mousePositions[i]->x - 10, mousePositions[i]->y - 20);
 						}
 
 						mice++;
@@ -197,6 +206,14 @@ void NetworkConnection::Listen()
 				}
 			}
 		} while (waiting > 0);
+	}
+}
+
+void NetworkConnection::DrawHeatmap()
+{
+	for (int i = 0; i < mousePositions.size(); i++)
+	{
+		heatmap->SetImagePixel(new sf::Vector2i(mousePositions[i]->x, mousePositions[i]->y), sf::Color(0, mousePositions[i]->miscInt, 0, mousePositions[i]->miscInt));
 	}
 }
 

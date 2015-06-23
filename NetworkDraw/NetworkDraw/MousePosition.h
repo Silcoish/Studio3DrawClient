@@ -8,12 +8,13 @@ class MousePosition
 public:
 	int x, y;
 	char misc;
-	sf::RectangleShape* rect;
+	unsigned int miscInt;
+	sf::Sprite* mouseImage;
 	sf::Font font;
 	sf::Text* text;
 public:
 	MousePosition() {};
-	~MousePosition() { delete rect; };
+	~MousePosition() { delete mouseImage; };
 };
 
 #endif

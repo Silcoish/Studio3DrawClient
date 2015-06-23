@@ -25,21 +25,7 @@ void Heatmap::Update()
 	{
 		for (auto &a : mousePos)
 		{
-			SetImagePixel(a.x, a.y, sf::Color(255, 0, 0, 30));
-
-			SetImagePixel(a.x - 1, a.y, sf::Color(255, 0, 0, 30));
-			SetImagePixel(a.x + 1, a.y, sf::Color(255, 0, 0, 30));
-			SetImagePixel(a.x, a.y + 1, sf::Color(255, 0, 0, 30));
-			SetImagePixel(a.x, a.y - 1, sf::Color(255, 0, 0, 30));
-
-			SetImagePixel(a.x - 2, a.y, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x + 2, a.y, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x, a.y - 2, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x, a.y + 2, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x + 1, a.y + 1, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x - 1, a.y + 1, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x + 1, a.y - 1, sf::Color(255, 0, 0, 15));
-			SetImagePixel(a.x - 1, a.y - 1, sf::Color(255, 0, 0, 15));
+			SetImagePixel(new sf::Vector2i(a.x, a.y), sf::Color(255, 0, 0, 30));
 		}
 
 		image->saveToFile(lastSaveFilename);
@@ -50,9 +36,23 @@ void Heatmap::Update()
 
 }
 
-void Heatmap::SetImagePixel(sf::Vector2i* mousePos, sf::Color color)
+void Heatmap::SetImagePixel(sf::Vector2i* a, sf::Color color)
 {
-	SetImagePixel(mousePos->x, mousePos->y, color);
+	SetImagePixel(a->x,		a->y,		color);
+										
+	SetImagePixel(a->x - 1, a->y,		color);
+	SetImagePixel(a->x + 1, a->y,		color);
+	SetImagePixel(a->x,	    a->y + 1,	color);
+	SetImagePixel(a->x,     a->y - 1,	color);
+										
+	SetImagePixel(a->x - 2, a->y,		color);
+	SetImagePixel(a->x + 2, a->y,		color);
+	SetImagePixel(a->x,	    a->y - 2,	color);
+	SetImagePixel(a->x,	    a->y + 2,	color);
+	SetImagePixel(a->x + 1, a->y + 1,	color);
+	SetImagePixel(a->x - 1, a->y + 1,	color);
+	SetImagePixel(a->x + 1, a->y - 1,	color);
+	SetImagePixel(a->x - 1, a->y - 1,	color);
 }
 
 void Heatmap::SetImagePixel(const int x, const int y, sf::Color color)
