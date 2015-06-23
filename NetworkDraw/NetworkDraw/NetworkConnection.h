@@ -28,7 +28,8 @@ private:
 	char receiveBuffer[1024];
 	int bufferLength = 1024;
 
-	int arrayLength = 0;
+	unsigned int arrayLength = 0;
+	unsigned int arrayBoxLength = 0;
 
 	const char* bell = "\a";
 

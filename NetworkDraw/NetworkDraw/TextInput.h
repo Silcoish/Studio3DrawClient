@@ -8,6 +8,7 @@ class TextInput
 {
 private:
 	bool selected = false;
+	sf::Color startColor;
 	sf::Vector2f* pos;
 	sf::Vector2f* size;
 	sf::RectangleShape* rect;

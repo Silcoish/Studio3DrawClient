@@ -17,6 +17,7 @@ NetworkConnection::~NetworkConnection()
 }
 
 PacketPixel packetArray[30];
+PacketBox packetBoxArray[30];
 
 void NetworkConnection::Update(sf::RenderWindow* window)
 {
@@ -28,7 +29,10 @@ void NetworkConnection::Update(sf::RenderWindow* window)
 	{
 		Listen();
 		start = end;
-		bool send = (arrayLength > 0) ? true : false;
+		bool sendPixel = (arrayLength > 0) ? true : false;
+		bool sendBoxes = (arrayBoxLength > 0) ? true : false;
+
+		//std::cout << "SendPixel: " << sendPixel << ", SendBoxes: " << sendBoxes << std::endl;
 
 		//Send mouse pointer
 		PacketClientCursor cursor;
@@ -45,21 +49,26 @@ void NetworkConnection::Update(sf::RenderWindow* window)
 
 		packetsSent++;		
 
-		if (send)
+		if (sendPixel)
 		{
-			int result = sendto(sendSocket, (const char*)packetArray, sizeof(*packetArray) * arrayLength, 0, (SOCKADDR*)&sendAddress, sizeof(sendAddress));
-			if (result == SOCKET_ERROR)
-			{
-				std::cout << "sendto() failed. Update Send Packet. Error: " << WSAGetLastError() << std::endl;
-			}
-			pixelsSent += arrayLength;
-			packetsSent++;
+			result = sendto(sendSocket, (const char*)packetArray, sizeof(*packetArray) * arrayLength, 0, (SOCKADDR*)&sendAddress, sizeof(sendAddress));
 			arrayLength = 0;
-			std::cout << "Pixels sent: " << pixelsSent << ", Packets sent: " << packetsSent << std::endl;
 		}
-			
-	}
+		else if (sendBoxes)
+		{
+			result = sendto(sendSocket, (const char*)packetBoxArray, sizeof(*packetBoxArray) * arrayBoxLength, 0, (SOCKADDR*)&sendAddress, sizeof(sendAddress));
+			arrayBoxLength = 0;
+		}
+		else
+			return;
+		
+		if (result == SOCKET_ERROR)
+		{
+			std::cout << "sendto() failed. Update Send Packet. Error: " << WSAGetLastError() << std::endl;
+		}
 
+		//std::cout << "Packets sent: " << packetsSent << std::endl;
+	}
 }
 
 void NetworkConnection::Render(sf::RenderWindow* window)
@@ -138,7 +147,7 @@ void NetworkConnection::Listen()
 
 			if (waiting > 0)
 			{
-				std::cout << "you have received something" << std::endl;
+				//std::cout << "you have received something" << std::endl;
 				int sendAddressSize = sizeof(sendAddress);
 				recvfrom(sendSocket, receiveBuffer, sizeof(receiveBuffer), 0, (SOCKADDR*)&sendAddress, &sendAddressSize);
 				Packet* packet = (Packet*)receiveBuffer;
@@ -155,10 +164,10 @@ void NetworkConnection::Listen()
 					int mice = 0;
 					for (int i = 0; i < p->count; i++)
 					{
-						std::cout << "X: " << p->cursor[i].m_posX << std::endl;
-						std::cout << "Y: " << p->cursor[i].m_posY << std::endl;
-						std::cout << "Misc: " << std::hex << (unsigned int)p->cursor[i].m_data << std::dec << std::endl;
-						std::cout << "Misc int: " << (int)p->cursor[i].m_data << std::endl;
+						//std::cout << "X: " << p->cursor[i].m_posX << std::endl;
+						//std::cout << "Y: " << p->cursor[i].m_posY << std::endl;
+						//std::cout << "Misc: " << std::hex << (unsigned int)p->cursor[i].m_data << std::dec << std::endl;
+						//std::cout << "Misc int: " << (int)p->cursor[i].m_data << std::endl;
 
 						if (i >= mousePositions.size())
 						{
@@ -202,7 +211,7 @@ void NetworkConnection::Listen()
 						mice++;
 					}
 
-					std::cout << "Mice received: " << mice << std::endl;
+					//std::cout << "Mice received: " << mice << std::endl;
 				}
 			}
 		} while (waiting > 0);
@@ -241,22 +250,21 @@ void NetworkConnection::ClearScreen()
 void NetworkConnection::SendPacket(PacketPixel *packet)
 {
 	packetArray[arrayLength] = *packet;
+
 	arrayLength++;
 
-	std::cout << arrayLength << std::endl;
+	//std::cout << arrayLength << std::endl;
 }
 
 //BOX
 void NetworkConnection::SendPacket(PacketBox *packet)
 {
+	packetBoxArray[arrayBoxLength] = *packet;
+	arrayBoxLength++;
 
-	packet->r = ui->red->value;
-	packet->g = ui->green->value;
-	packet->b = ui->blue->value;
-
-	int result = sendto(sendSocket, (const char*)packet, sizeof(*packet), 0, (SOCKADDR*)&sendAddress, sizeof(sendAddress));
-	if (result == SOCKET_ERROR)
-	{
-		std::cout << "sendto() failed. BOX Error: " << WSAGetLastError() << std::endl;
-	}
+	//int result = sendto(sendSocket, (const char*)packet, sizeof(*packet), 0, (SOCKADDR*)&sendAddress, sizeof(sendAddress));
+	//if (result == SOCKET_ERROR)
+	//{
+	//	std::cout << "sendto() failed. BOX Error: " << WSAGetLastError() << std::endl;
+	//}
 }

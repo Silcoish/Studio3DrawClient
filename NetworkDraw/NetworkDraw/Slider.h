@@ -19,6 +19,7 @@ public:
 public:
 	Slider(float x, float y, float w, float h, float min, float max, float startValue);
 	void SetColor(sf::Color color);
+	void MoveSlider();
 	void Update(sf::RenderWindow* renderWindow);
 	void Render(sf::RenderWindow* renderWindow);
 };

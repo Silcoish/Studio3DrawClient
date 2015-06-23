@@ -28,7 +28,7 @@ void Heatmap::Update()
 			SetImagePixel(new sf::Vector2i(a.x, a.y), sf::Color(255, 0, 0, 30));
 		}
 
-		image->saveToFile(lastSaveFilename);
+		//image->saveToFile(lastSaveFilename);
 
 		mousePos.clear();
 		start = std::chrono::system_clock::now();

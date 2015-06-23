@@ -24,7 +24,7 @@ void main()
 
 	drawType type = PIXEL;
 
-	sf::RenderWindow window(sf::VideoMode(712, 512), "SFML Network Drawing Program");
+	sf::RenderWindow window(sf::VideoMode(512, 612), "SFML Network Drawing Program");
 	UI ui(ip, port);
 	Heatmap heatmap;
 	NetworkConnection connection(&heatmap);
@@ -61,6 +61,7 @@ void main()
 					connection.Connect(i, p);
 					std::cout << "Result: " << connection.connected << std::endl;
 					connection.ui = &ui;
+					ui.connected = true;
 				}
 			}
 
@@ -107,16 +108,16 @@ void main()
 						break;
 					}
 					case SQUARE:
-						PacketBox box;
-						box.type = Packet::e_box;
-						box.x = sf::Mouse::getPosition(window).x;
-						box.y = sf::Mouse::getPosition(window).y;
-						box.w = 10;
-						box.h = 10;
-						box.r = (rand() % 255);
-						box.g = (rand() % 255);
-						box.b = (rand() % 255);
-						connection.SendPacket(&box);
+						PacketBox* box = new PacketBox();
+						box->type = Packet::e_box;
+						box->x = sf::Mouse::getPosition(window).x;
+						box->y = sf::Mouse::getPosition(window).y;
+						box->w = 10;
+						box->h = 10;
+						box->r = ui.red->value;
+						box->g = ui.green->value;
+						box->b = ui.blue->value;
+						connection.SendPacket(box);
 					}
 				}
 			}

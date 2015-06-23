@@ -12,6 +12,8 @@ TextInput::TextInput(sf::Vector2f& position, sf::Vector2f& size, const std::stri
 	rect = new sf::RectangleShape(*this->size);
 	rect->setPosition(*pos);
 	rect->setFillColor(sf::Color::White);
+	rect->setOutlineColor(sf::Color::Black);
+	rect->setOutlineThickness(1);
 
 	//load font and set text
 	font.loadFromFile("Resources/JOKERMAN.TTF");
@@ -37,6 +39,11 @@ void TextInput::Update(sf::Event* e, sf::RenderWindow* renderWindow)
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && selected)
 		selected = false;
+
+	if (selected)
+		rect->setFillColor(sf::Color(200, 200, 200, 255));
+	else
+		rect->setFillColor(sf::Color::White);
 }
 
 void TextInput::Input(sf::Event* e)
